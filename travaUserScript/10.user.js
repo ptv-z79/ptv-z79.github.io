@@ -23,7 +23,7 @@
 
 
 // https://ptv-z79.github.io/travaUserScript/10.user.js
-var ptv_version='v.0.4 beta / 2016-12-14'; // начал писать 2016-12-10
+var ptv_version='v.0.5 beta / 2016-12-15'; // начал писать 2016-12-10
 
 // альянс
 var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
@@ -55,6 +55,13 @@ GM_xmlhttpRequest({
     
   }
 });
+
+
+
+
+
+
+
 
 
 
@@ -227,8 +234,9 @@ var doc = document || window.document;
 var ptv_html = doc.body.innerHTML;
 
 
-
+// заменяем символы
 ptv_html = ptv_html.replace(new RegExp('&quot;','g'),'"');
+ptv_html = ptv_html.replace(new RegExp('&amp;','g'),'&');
 dorf2area = ptv_html.indexOf('<area ', 0);
 idd = ptv_html.substr(dorf2area, 1000);
 //alert(idd);
@@ -244,8 +252,26 @@ idd = ptv_html.substr(dorf2area, 1000);
 // ищем в строке  ptv_html
 var target = '<a href="?newdid='; // цель поиска
 var aTag = ''; // сюда будем писать тело DIV (ссылки, таблицы и т.д.)
+
+
 var pos = -1;
 while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
+  
+  // парсим ссылку деревни
+  var sTmp = ptv_html.substr(pos+9, 200); // в этой строке где-то есть id деревни
+  var VilHref = '';
+  for (var hr=1;hr<=200;hr++){
+    var code = sTmp.charCodeAt(hr); // получаем Unicode символа
+    if (code == 34){
+      VilHref=sTmp.substr(0, hr);
+      break;
+    }
+  }
+  //alert(VilHref);
+   
+  
+  
+  
   
   // парсим ID деревни
   var sTmp = ptv_html.substr(pos+17, 10); // в этой строке где-то есть id деревни
@@ -309,7 +335,7 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   VilY = VilTmp;  
   // alert(VilY);
   
-  aTag += '<tr><td width="1px"><a class="ptv_aN" href="?newdid='+VilID+'&">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR" href="#" onclick="location.href=\'\/build.php?newdid='+VilID+'&t=5&gid=17\';"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
+  aTag += '<tr><td width="1px"><a class="ptv_aN" href="'+VilHref+'">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR" href="#" onclick="location.href=\'\/build.php?newdid='+VilID+'&t=5&gid=17\';"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
 }
 
 // --- создаём DIV, в которм всё ---
@@ -333,8 +359,8 @@ function SetDiv(){
   var s=d.style
   s.position='absolute';
   s.border='1px solid #cccccc';
-  s.left=(coX1-16)+'px';
-  s.top=(coY1+120)+'px';
+  s.left=(coX1-40)+'px';
+  s.top=410 +'px';  // (coY1+120)+'px';
   d.style.width='201px';
 	s.padding='0px 2px 2px 2px';
   d.style.background='rgba(241,224,90,0.99)';
@@ -439,7 +465,7 @@ var ptv_st = document.createElement('style');
       'white-space:nowrap;'+
       'overflow:hidden;'+
       'text-overflow:ellipsis;'+
-      'cursor: default;'+
+      'cursor: pointer;'+
       'outline:none;}'+
    
    '.ptv_aN:hover,.ptv_aXY:hover,.ptv_aR:hover{'+
@@ -463,13 +489,26 @@ var ptv_st = document.createElement('style');
   
   
   
+    
+  // левое меню ---
   
+  //'div#sidebarBeforeContent{width:200px;}'+
+    
+  // скрываем блок  id=sidebarBoxInfobox
+  'div#sidebarBoxInfobox{display:none;}'+
+  // скрываем блок  id=sidebarBoxLinklist
+  'div#sidebarBoxLinklist{display:none;}'+
+    
+    
+    
   
-  // окошко с нападениями (из игры стиль - изм.)
-  'div.village1 div.movements{'+  
-    'left:-381px;'+
-    'top:-56px;'+
-  '}';
+  // правое меню --- ресурсы
+  // убираем кнопку +25 за голд
+    'div.boxes.villageList.production > div.boxes-contents.cf > div {display:none;}'+
+  // перемещаем окошко с производством в час
+    //'div.boxes.villageList.production{left:-598px;top:100px;}'+
+  // перемещаем окошко с нападениями
+  'div.village1 div.movements{left:0px;top:0px;}';
 
   document.body.appendChild(ptv_st);
 
