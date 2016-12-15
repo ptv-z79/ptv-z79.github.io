@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.51 beta
+// @version     0.5 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
