@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.5 beta
+// @version     0.51 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -179,7 +179,7 @@ var urlPath = location.pathname; //   /dorf1.php
 
 
 
-var coElem = getPosElem('travianBirthdayRibbon','6010')
+var coElem = getPosElem('travianBirthdayRibbon','6008')
 
 // определяем позицию элемента на странице по ID и сверху накладываем DIV для наглядности
 function getPosElem(id,zInd){
@@ -371,7 +371,7 @@ function SetDiv(){
   d.style.width='201px';
 	s.padding='0px 2px 2px 2px';
   d.style.background='rgba(241,224,90,0.99)';
-  s.zIndex='6011';
+  s.zIndex='6009';
 
   // d.addEventListener('mousedown', ptvDrag); // таким образом функция в теле UserScript и работает из DOM!!!
 	document.body.appendChild(d);
@@ -517,7 +517,7 @@ var ptv_st = document.createElement('style');
   // перемещаем окошко с производством в час
   'div.boxes.villageList.production{left:-21px;top:0px;width:180px;}'+
   // перемещаем окошко с нападениями
-  'div.village1 div.movements{left:-21px;top:0px;}';
+  'div.village1 div.movements{left:0px;top:0px;';
 
   document.body.appendChild(ptv_st);
 
