@@ -179,30 +179,9 @@ var urlPath = location.pathname; //   /dorf1.php
 
 
 
-var coElem = getPosElem('travianBirthdayRibbon','6008')
+var coElem = getPosElem('outOfGame','6008', false)
 
-// определяем позицию элемента на странице по ID и сверху накладываем DIV для наглядности
-function getPosElem(id,zInd){
-  var co = document.getElementById(id).getBoundingClientRect();
-  var coX1 = Math.round(co.left);
-  var coY1 = Math.round(co.top);
-  var coX2 = Math.round(co.right);
-  var coY2 = Math.round(co.bottom);
-  var coW = coX2 - coX1
-  var coH = coY2 - coY1
-  var d = document.createElement('div');
-  var s=d.style
-  s.position='absolute';
-  s.left=coX1+'px';
-  s.top=coY1+'px';
-  s.width=coW+'px';
-	s.height=coH+'px';
-	s.backgroundColor='rgba(228,75,35,0.49)';
-  s.zIndex=zInd;
-  document.body.appendChild(d);
-  var co=['',coX1,coY1,coX2,coY2];
-  return co;
-}
+
   
 var zInd = getStyle ( "travianBirthdayRibbon" , "z-index" )
 
@@ -242,7 +221,7 @@ ptv_html = ptv_html.replace(new RegExp('&quot;','g'),'"');
 
 dorf2area = ptv_html.indexOf('<area ', 0);
 idd = ptv_html.substr(dorf2area, 1000);
-console.info(idd);
+//console.info(idd);
 
 
 
@@ -278,7 +257,7 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
       break;
     }
   }
-  console.info('VilHref='+VilHref);
+  //console.info('VilHref='+VilHref);
   
   // парсим ID деревни
   var sTmp = ptv_html.substr(pos+17, 10); // в этой строке где-то есть id деревни
@@ -342,13 +321,55 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   VilY = VilTmp;  
   // alert(VilY);
   
+  
+
+
+
+
+  
+  
+  
   aTag += '<tr><td width="1px"><a class="ptv_aN'+ptvActive+'" href="'+VilHref+'">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY'+ptvActive+'" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR'+ptvActive+'"  href="build.php?newdid='+VilID+'&t=5&gid=17"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
 }
 
 // --- создаём DIV, в которм всё ---
 
 
-var ptv_verrr = '<div class="ptv_zag" onmousedown="ptvDrag()";>'+ptv_version+'</div>';
+
+
+var vilLoy=document.querySelector('div.expansionSlotInfo').outerHTML;
+console.info(vilLoy);
+var vilLoy=document.querySelector('div.expansionSlotInfo').textContent;
+console.info(vilLoy);
+var vilLoy=document.querySelector('div.expansionSlotInfo').title;
+console.info(vilLoy);
+
+
+
+
+
+
+
+var btnQuest=document.querySelector('form > div.questAchievementContainer > button');
+
+
+//function btnClick(el){
+function btnClick(){
+  var evt = document.createEvent("MouseEvents");
+  evt.initEvent("click", true, true);
+  btnQuest.dispatchEvent(evt);
+  //el.dispatchEvent(evt);
+}
+
+
+
+
+
+
+
+
+
+var ptv_verrr = '<div class="ptv_zag">'+ptv_version+'</div>';
 
 
 
@@ -356,9 +377,11 @@ var ptv_verrr = '<div class="ptv_zag" onmousedown="ptvDrag()";>'+ptv_version+'</
 
 
 SetDiv()
+
+
+
 function SetDiv(){
   var d=document.createElement('div');
-
 
   d.innerHTML=ptv_verrr+'<table id="tbl_ptv_Village">'+aTag+'</table>';
   
@@ -366,15 +389,22 @@ function SetDiv(){
   var s=d.style
   s.position='absolute';
   s.border='1px solid #cccccc';
-  s.left=(coElem[1]-40)+'px';
+  s.left=(coElem[1]-65)+'px';
   s.top=198 +'px';  // (coY1+120)+'px';
   d.style.width='201px';
 	s.padding='0px 2px 2px 2px';
   d.style.background='rgba(241,224,90,0.99)';
   s.zIndex='6009';
 
-  // d.addEventListener('mousedown', ptvDrag); // таким образом функция в теле UserScript и работает из DOM!!!
 	document.body.appendChild(d);
+  
+  var b=document.createElement('div');
+  b.innerHTML='Ежедневные Бонусы';
+  b.setAttribute('class', 'ptv_bQuest');
+  d.appendChild(b);
+  b.addEventListener('mousedown', btnClick);
+  
+  
   
 	
 }
@@ -475,27 +505,15 @@ var ptv_st = document.createElement('style');
       'cursor: pointer;'+
       'outline:none;}'+
    
-   '.ptv_aN:hover,.ptv_aXY:hover,.ptv_aR:hover{'+
-      'background-color:rgba(226,238,249,0.9);'+
-      'border:1px solid transparent;'+   // rgba(186,198,211,0.9)'+
-      '}'+
-   '.ptv_aN:active,.ptv_aXY:active,.ptv_aR:active{'+
-      'background-color:rgba(198,224,250,0.999);'+
-      'border:1px solid transparent;'+   // rgba(186,198,211,0.9)'+
-      '}'+
+   '.ptv_aN:hover,.ptv_aXY:hover,.ptv_aR:hover{background-color:rgba(226,238,249,0.9);border:1px solid white;}'+
+   '.ptv_aN:active,.ptv_aXY:active,.ptv_aR:active{background-color:rgba(198,224,250,0.999);border:1px solid transparent;}'+
+   '.ptv_active{background-color:rgba(93,211,240,0.4)}'+
     
-    '.ptv_active{'+
-      'background-color:rgba(93,211,240,0.4)'+
-      '}'+
-    
-    
-    
-  '.ptv_zag{'+
-     'font-family:Tahoma,sans-serif;'+
-     'font-size:8pt;'+
-     'padding:2px 4px 3px 0px;'+
-     'text-align:right;}'+
+  '.ptv_zag,.ptv_bQuest{font-family:Tahoma,sans-serif;font-size:8pt;}'+  
+  '.ptv_zag{padding:2px 4px 3px 0px;text-align:right;}'+
   
+  '.ptv_bQuest{padding:2px 0px 4px 0px;margin-top:4px;text-align:center;border:1px solid white;background-color:rgba(255,255,255,0.6);cursor:pointer;}'+
+  '.ptv_bQuest:hover{background-color:rgba(93,242,137,0.5)} .ptv_bQuest:active{background-color:rgba(93,242,137,0.9)}'+
   
   
   // --- стиль изменений оригинальной страницы нужно ставить ДО началы работы скоипта ---
@@ -517,7 +535,11 @@ var ptv_st = document.createElement('style');
   // перемещаем окошко с производством в час
   'div.boxes.villageList.production{left:-21px;top:0px;width:180px;}'+
   // перемещаем окошко с нападениями
-  'div.village1 div.movements{left:0px;top:0px;';
+  'div.village1 div.movements{left:0px;top:0px;}'+
+  // скрываем окошко "Ежедневные задания"
+  'div#sidebarBoxQuestachievements{visibility:hidden;}'+
+  
+  '';
 
   document.body.appendChild(ptv_st);
 
@@ -531,3 +553,47 @@ var ptv_st = document.createElement('style');
 // --- реальные ширина(Width) и высота(Height) вместе с прокруткой web-страницы --->  https://gist.github.com/tit
 function RealWHtmlPage(){var rw = Math.max(document.body.clientWidth, document.body.offsetWidth, document.body.scrollWidth); return rw;}
 function RealHHtmlPage(){var rh = Math.max(document.body.clientHeight, document.body.offsetHeight, document.body.scrollHeight); return rh;}
+
+
+
+// ---------------------------------------------------------------------------------------------------------------
+// ---------------------------  Функции для парсинга html-кода  --------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------
+
+
+// определяем позицию элемента на странице по ID и сверху накладываем DIV для наглядности
+// getPosElem('id=строка','zIndex=строка', true|false=рисовать DIV повер элемента|не рисовать DIV поверх элемента) 
+function getPosElem(id,zInd,bool){
+  var co = document.getElementById(id).getBoundingClientRect();
+  var coX1 = Math.round(co.left);
+  var coY1 = Math.round(co.top);
+  var coX2 = Math.round(co.right);
+  var coY2 = Math.round(co.bottom);
+  var coW = coX2 - coX1
+  var coH = coY2 - coY1
+  
+  //console.info(bool);
+  if(bool){
+    var d = document.createElement('div');
+    var s=d.style
+    s.position='absolute';
+    s.left=coX1+'px';
+    s.top=coY1+'px';
+    s.width=coW+'px';
+	  s.height=coH+'px';
+	  s.backgroundColor='rgba(228,75,35,0.49)';
+    s.zIndex=zInd;
+    document.body.appendChild(d);
+  }
+  
+  var co=['',coX1,coY1,coX2,coY2];
+  return co;
+}
+
+
+
+
+
+
+
+
