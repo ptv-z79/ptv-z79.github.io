@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.51 beta
+// @version     0.0.60 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -22,11 +22,11 @@
 // ==/UserScript==
 
 
-// https://ptv-z79.github.io/travaUserScript/10.user.js
-var ptv_version='v.0.51 beta / 2016-12-15'; // начал писать 2016-12-10
+var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
+var ptv_version='v.0.0.60 beta / 2016-12-20'; // начал писать 2016-12-10
 
 // альянс
-var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
+//var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
 // игрок
 //var href = 'http://travian.ping-timeout.de/travissimo/travissimo.php?uid=10944&domain=ts2.travian.co.uk'
 //var href = 'http://travian.ping-timeout.de/travissimo/dorf.php?d=340759&domain=ts2.travian.co.uk'; // деревня
@@ -34,7 +34,7 @@ var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain
 //var href = 'http://ts2.travian.co.uk/dorf2.php'
 //var href = 'http://travian.ping-timeout.de/index.php?m=spielersuche&uid=141&w=ukts2'
 
-
+/*
 GM_xmlhttpRequest({
   method: "GET",
   url: href,
@@ -55,7 +55,7 @@ GM_xmlhttpRequest({
     
   }
 });
-
+*/
 
 
 // --- переменные --------------------------------------------------
@@ -164,9 +164,46 @@ function xy2id(x, y) {
 // 9 = 57
 // alert( '9'.charCodeAt(0) );
 
+var G_HREF = location.href;     // http://ts6.travian.co.uk/berichte.php?t=4
+var G_PROT = location.protocol; // http:
+var G_HOST = location.hostname; // ts6.travian.co.uk
+var G_PATH = location.pathname; // /berichte.php
 
-var server = location.hostname; // ts2.travian.co.uk
-var urlPath = location.pathname; //   /dorf1.php
+/*
+console.info('Href: ' + G_HREF);
+console.info('Protocol: ' + G_PROT);
+console.info('Host: ' + G_HOST);
+console.info('Path: ' + G_PATH);
+console.info('Длина Path: ' + G_PATH.length)
+*/
+
+
+
+// добавляем свою кнопку 'Delete|Удалить' в отчётах вверху-слева, возле 'mark all|отметить всё' для удобства  :)
+if(G_PATH == '/berichte.php'){
+  var u=G_PROT+'//'+G_HOST+G_PATH;
+  u=G_HREF.replace(u,'');
+  if(u.length<=4 && u!='?t=6' || u.substring(0,4)=='?n1='){
+    var d=document.createElement('span');
+    d.innerHTML='Удалить';
+    d.setAttribute('class', 'ptv_bDelBerichte');
+    var btn=document.querySelector('button#del'); // на этот элемент будем клацать программно
+    var place=document.querySelector('div#markAll'); // после этого элемента вставим наш SPAN (псевдо-кнопку DELETE)
+    place.appendChild(d); // добавим наш SPAN после элемента place
+    d.addEventListener('mouseup', btnClickMarkAll); //
+     function btnClickMarkAll(){
+       var evt = document.createEvent("MouseEvents");
+       evt.initEvent("click", true, true);
+       btn.dispatchEvent(evt);
+       //el.dispatchEvent(evt);
+   }}}
+
+
+
+
+
+
+
 //alert(urlPath);
 
 //http://travian.ping-timeout.de/travissimo/travissimo.php?domain=ts2.travian.co.uk&uid=69881
@@ -236,6 +273,7 @@ var target = '<a href="?newdid='; // цель поиска
 var aTag = ''; // сюда будем писать тело DIV (ссылки, таблицы и т.д.)
 
 
+var G_AVN = ''; // имя активной деревни
 var pos = -1;
 while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   
@@ -245,6 +283,7 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   sTmp=sTmp.indexOf('class="active"', 0)
   var ptvActive='';
   ptvActive=(sTmp>0)?' ptv_active':'';
+  
   
   
   // парсим ссылку деревни
@@ -281,6 +320,9 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   var EndOfStringName = sTmp.indexOf('</div>', 0);
   var VilName = sTmp.substr(0, EndOfStringName);
   // alert(VilName);
+  if(ptvActive==' ptv_active')G_AVN=VilName;
+  
+  
   
   // --- парсим координату X ---
   var str = ptv_html.substr(pos + strInN, 500);
@@ -332,6 +374,15 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   aTag += '<tr><td width="1px"><a class="ptv_aN'+ptvActive+'" href="'+VilHref+'">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY'+ptvActive+'" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR'+ptvActive+'"  href="build.php?newdid='+VilID+'&t=5&gid=17"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
 }
 
+
+
+console.info('ИМЯ АКТИВНОЙ ДЕРЕВНИ: '+G_AVN);
+
+
+
+
+
+
 // --- создаём DIV, в которм всё ---
 
 
@@ -343,8 +394,11 @@ var vilLoy=document.querySelector('div.expansionSlotInfo').textContent;
 console.info(vilLoy);
 var vilLoy=document.querySelector('div.expansionSlotInfo').title;
 console.info(vilLoy);
+var vilLoy=document.querySelector('div.expansionSlotInfo div.bar').style.width;
+console.info(vilLoy);
 
 
+//innerText
 
 
 
@@ -369,7 +423,11 @@ function btnClick(){
 
 
 
-var ptv_verrr = '<div class="ptv_zag">'+ptv_version+'</div>';
+
+
+
+
+var ptv_verrr = '<table id="tbl_ptv_UpVer"><tr><td><a class="aUpDate" href="'+G_HREFUPDATE+'" target="_blank">Update</a></td><td><div class="ptv_zag">'+ptv_version+'</div></td></tr></table>';
 
 
 
@@ -402,7 +460,7 @@ function SetDiv(){
   b.innerHTML='Ежедневные Бонусы';
   b.setAttribute('class', 'ptv_bQuest');
   d.appendChild(b);
-  b.addEventListener('mousedown', btnClick);
+  b.addEventListener('mouseup', btnClick);
   
   
   
@@ -460,21 +518,27 @@ function ptvMapXY(){
 // создаём elem STYLE в котором стили для всех наших элементов
 var ptv_st = document.createElement('style');
   ptv_st.innerHTML =
-    '#tbl_ptv_Village {'+
+    'TABLE#tbl_ptv_UpVer, #tbl_ptv_Village {'+
       'margin:0px;'+
       'padding:0px !important;'+
-    'border-collapse:collapse !important;'+
-    'line-height: 0px;'+
-    'width: 100%;'+
-    'empty-cells: show;'+
-    
-    'display: '+
+      'border-collapse:collapse !important;'+
+      'line-height: 0px;'+
+      'width: 100%;'+
+      'empty-cells: show;'+
+      
       '}'+
     
+    'TABLE#tbl_ptv_UpVer{background-color:rgba(241,224,90,0.99);margin:2px 0 3px 0;}'+
     
-    '#tbl_ptv_Village td{'+
-      'margin:0px;padding:0px;border:1px solid #cccccc;'+
-      '}'+
+    '#tbl_ptv_UpVer td{margin:0px;padding:0px;border:1px solid transparent;background-color:rgba(241,224,90,0.99);}'+
+    '#tbl_ptv_Village td{margin:0px;padding:0px;border:1px solid #cccccc;}'+
+    
+    
+    
+
+    '.aUpDate{font-family:Tahoma,sans-serif;font-size:8pt;font-weight:normal;display:block;margin:0px;height:20px;line-height:19px;text-align:center;border:1px solid white;background-color:rgba(255,255,255,0.6);cursor:pointer;color:black !important;padding:0px 3px 0px 3px;}'+
+    '.aUpDate:hover{background-color:rgba(93,242,137,0.5);} .aUpDate:active{background-color:rgba(93,242,137,0.9);}'+    
+    
     
     
     
@@ -510,10 +574,11 @@ var ptv_st = document.createElement('style');
    '.ptv_active{background-color:rgba(93,211,240,0.4)}'+
     
   '.ptv_zag,.ptv_bQuest{font-family:Tahoma,sans-serif;font-size:8pt;}'+  
-  '.ptv_zag{padding:2px 4px 3px 0px;text-align:right;}'+
+  '.ptv_zag{padding:2px 4px 3px 0px;text-align:right;border:1px solid transparent;}'+
   
   '.ptv_bQuest{padding:2px 0px 4px 0px;margin-top:4px;text-align:center;border:1px solid white;background-color:rgba(255,255,255,0.6);cursor:pointer;}'+
   '.ptv_bQuest:hover{background-color:rgba(93,242,137,0.5)} .ptv_bQuest:active{background-color:rgba(93,242,137,0.9)}'+
+  
   
   
   // --- стиль изменений оригинальной страницы нужно ставить ДО началы работы скоипта ---
@@ -539,7 +604,24 @@ var ptv_st = document.createElement('style');
   // скрываем окошко "Ежедневные задания"
   'div#sidebarBoxQuestachievements{visibility:hidden;}'+
   
-  '';
+  
+  // стиль для своей кнопки 'Delete|Удалить' в отчётах вверху-слева, возле 'mark all|отметить всё' для удобства  :)
+  '.ptv_bDelBerichte{'+
+    'position:absolute;'+
+    'padding:3px 17px 5px 17px;'+
+    'margin:-6px 0px 0px 20px !important;'+
+    'background-color:rgba(93,242,137,0.5);'+
+    'color:black;'+
+    'border:1px solid #cccccc;'+
+    'font-family:Verdana,sans-serif;'+
+    'font-size:11px;'+
+    'font-weight:normal;'+
+    'cursor:pointer;}'+
+  '.ptv_bDelBerichte:hover{background-color:rgba(93,242,137,0.7);} .ptv_bDelBerichte:active{background-color:rgba(93,242,137,0.99);}'+
+    
+    
+    
+    '';
 
   document.body.appendChild(ptv_st);
 
