@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.0.60 beta
+// @version     0.0.62 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -23,7 +23,7 @@
 
 
 var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
-var ptv_version='v.0.0.60 beta / 2016-12-20'; // начал писать 2016-12-10
+var ptv_version='v.0.0.62 beta / 2016-12-21'; // начал писать 2016-12-10
 
 // альянс
 //var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
