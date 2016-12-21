@@ -201,6 +201,56 @@ if(G_PATH == '/berichte.php'){
 
 
 
+if(G_PATH=='/karte.php'){
+  console.info('Карта');
+  var stKarte=''+
+      'div#header, #footer {display: none;}'+
+      'div#background {background-image: none !important;}'+
+    
+      'div#mapContainer {'+
+        'position: absolute;'+
+        'left: -179px !important;'+
+        'top: 0px;'+
+        'width: 983px;'+
+        'height: 647px;'+
+        'cursor: auto;'+
+        'z-index: 1000;}'+
+  
+      'div#mapContainer div.ruler.x {width: 983px !important;}'+
+      'div#mapContainer div.ruler.x > div {width: 2400px !important; left:-318px !important;}'+
+  
+      'div#mapContainer div.ruler.y {height: 647px !important;}'+
+      'div#mapContainer div.ruler.y > div {height: 2400px !important; top:-546px !important;}'+
+      
+      // убираем моё меню с карты
+      '#ptv_divMain{display:none;}'+
+      '';
+  
+  var d=document.createElement('div');
+  d.style.width='26px';
+  d.style.height='23px';
+  d.style.border='1px solid white';
+  d.style.backgroundColor='rgba(241,224,90,0.99)';
+  d.style.zIndex='99999';
+  var stA='position:absolute;left:1px;top:1px;background-color:rgba(255,255,255,0.1);width:26px;height:23px;';
+  
+  d.innerHTML='<a href="dorf1.php" class="mapClose" style="'+stA+'">&nbsp;</a>';
+  var el = document.querySelector('#iconFullscreen');
+  el.appendChild(d);
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -371,7 +421,7 @@ while ((pos = ptv_html.indexOf(target, pos + 1)) != -1) {
   
   
   
-  aTag += '<tr><td width="1px"><a class="ptv_aN'+ptvActive+'" href="'+VilHref+'">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY'+ptvActive+'" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR'+ptvActive+'"  href="build.php?newdid='+VilID+'&t=5&gid=17"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
+  aTag += '<tr><td width="1px"><a class="ptv_aN'+ptvActive+'" href="'+VilHref+'">'+VilName+'</a></td><td width="1px"><a class="ptv_aXY'+ptvActive+'" href="#" onclick="document.getElementById(\'xCoordInput\').value='+VilX+';document.getElementById(\'yCoordInput\').value='+VilY+';">('+VilX+'|'+VilY+')</a></td><td width="1px"><a class="ptv_aR'+ptvActive+'"  href="build.php?newdid='+VilID+'&gid=17&t=5"><img src="img/x.gif" class="imgR"></a></td><td></td></tr>'
 }
 
 
@@ -616,10 +666,15 @@ var ptv_st = document.createElement('style');
     'font-family:Verdana,sans-serif;'+
     'font-size:11px;'+
     'font-weight:normal;'+
+    '-moz-user-select: none;'+
     'cursor:pointer;}'+
   '.ptv_bDelBerichte:hover{background-color:rgba(93,242,137,0.7);} .ptv_bDelBerichte:active{background-color:rgba(93,242,137,0.99);}'+
     
-    
+    // стиль дописываем только для карты (karte.php)
+    stKarte+
+    // кнопка ЗАКРЫТЬ КАРТУ - при наведении
+    '.mapClose:hover{background-color:rgba(255,255,255,0.5) !important;}'+
+    '.mapClose:active{background-color:rgba(0,0,0,0.5) !important;}'+
     
     '';
 
