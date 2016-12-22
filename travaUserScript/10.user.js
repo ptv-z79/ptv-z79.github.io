@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.0.62 beta
+// @version     0.0.63 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -23,7 +23,7 @@
 
 
 var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
-var ptv_version='v.0.0.62 beta / 2016-12-21'; // начал писать 2016-12-10
+var ptv_version='v.0.0.63 beta / 2016-12-21'; // начал писать 2016-12-10
 
 // альянс
 //var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
@@ -61,8 +61,24 @@ GM_xmlhttpRequest({
 // --- переменные --------------------------------------------------
 
 
+var G_MAPWIDTH = RealWHtmlPage() - 25;
+var G_MAPHEIGHT = document.documentElement.clientHeight - 20;
+
+var G_MAPBOXWIDTH; // ширина загружаемого фрагмента карты
+if(window.screen.width<=1024)G_MAPBOXWIDTH=2400;
+var G_MAPBOXHEIGHT; // высота загружаемого фрагмента карты
+if(window.screen.height<=768)G_MAPBOXHEIGHT=2400;
+
+console.info(G_MAPBOXWIDTH);
+console.info(G_MAPBOXHEIGHT);
 
 
+
+// расчитываем расстояние от левого края по X до карты, чтобы разместить её впритык по Х=0
+var G_MAPLEFT;
+var mapTmp=getPosElem('sidebarBeforeContent','1', false);
+mapTmp=mapTmp[3];
+G_MAPLEFT=mapTmp-17;
 
 
 
@@ -81,72 +97,6 @@ function xy2id(x, y) {
 */
 
 // http://t4.answers.travian.ru/?view=answers&action=answer&aid=213
-// /build.php?gid=1    - 
-// /build.php?gid=2    - 
-// /build.php?gid=3    - 
-// /build.php?gid=4    - 
-// /build.php?gid=5    - 
-// /build.php?gid=6    - 
-// /build.php?gid=7    - 
-// /build.php?gid=8    - 
-// /build.php?gid=9    - 
-// /build.php?gid=10   - 
-// /build.php?gid=11   - 
-// /build.php?gid=12   - 
-// /build.php?gid=13   - 
-// /build.php?gid=14   - 
-// /build.php?gid=15   - 
-// /build.php?gid=16   - 
-// /build.php?gid=17   - 
-// /build.php?gid=18   - 
-// /build.php?gid=19   - 
-// /build.php?gid=20   - 
-// /build.php?gid=21   - 
-// /build.php?gid=22   - 
-// /build.php?gid=23   - 
-// /build.php?gid=24   - 
-// /build.php?gid=25   - 
-// /build.php?gid=26   - 
-// /build.php?gid=27   - 
-// /build.php?gid=28   - 
-// /build.php?gid=29   - 
-// /build.php?gid=30   - 
-// /build.php?gid=31   - 
-// /build.php?gid=32   - 
-// /build.php?gid=33   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-// /build.php?gid=1   - 
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -203,43 +153,69 @@ if(G_PATH == '/berichte.php'){
 
 if(G_PATH=='/karte.php'){
   console.info('Карта');
+  
+  document.body.style.overflow = 'hidden'; // запрещаем прокрутку страницы
+  
   var stKarte=''+
+      
       'div#header, #footer {display: none;}'+
+      'body.map, #headerBar{background-image:none !important;background-color:white;}'+
       'div#background {background-image: none !important;}'+
     
       'div#mapContainer {'+
         'position: absolute;'+
-        'left: -179px !important;'+
+        'left: -'+G_MAPLEFT+'px !important;'+
         'top: 0px;'+
-        'width: 983px;'+
-        'height: 647px;'+
+        'width: '+G_MAPWIDTH+'px;'+ // 983px;'+
+        'height: '+G_MAPHEIGHT+'px;'+ // 647px;'+
         'cursor: auto;'+
         'z-index: 1000;}'+
   
-      'div#mapContainer div.ruler.x {width: 983px !important;}'+
-      'div#mapContainer div.ruler.x > div {width: 2400px !important; left:-318px !important;}'+
+      'div#mapContainer div.ruler.x {width: '+G_MAPWIDTH+'px !important;}'+
+      //'div#mapContainer div.ruler.x > div {width: '+G_MAPBOXWIDTH+'px !important;}'+
   
-      'div#mapContainer div.ruler.y {height: 647px !important;}'+
-      'div#mapContainer div.ruler.y > div {height: 2400px !important; top:-546px !important;}'+
+      'div#mapContainer div.ruler.y {height: '+G_MAPHEIGHT+'px !important;}'+
+      //'div#mapContainer div.ruler.y > div {height: '+G_MAPBOXHEIGHT+'px !important;}'+
+       
+      // при наведении и нажатии на кнопку  Close  - выход с карты
+      '.mapClose:hover{background-color:rgba(255,255,255,0.5) !important; color:black !important}'+
+      '.mapClose:active{background-color:rgba(255,255,255,0.7) !important; color:black !important;}'+
+    
+      
+      
       
       // убираем моё меню с карты
       '#ptv_divMain{display:none;}'+
       '';
   
   var d=document.createElement('div');
-  d.style.width='26px';
-  d.style.height='23px';
-  d.style.border='1px solid white';
-  d.style.backgroundColor='rgba(241,224,90,0.99)';
-  d.style.zIndex='99999';
-  var stA='position:absolute;left:1px;top:1px;background-color:rgba(255,255,255,0.1);width:26px;height:23px;';
+  var stA='display:block;background-color:rgba(255,255,255,0.15);width:46px;height:25px;font-family:Tahoma,sans-serif;font-size:8pt;font-weight:normal;color:white;text-decoration:none;text-align:center;line-height:22px;';
+  // PLUS не включен || PLUS включен
+  var el = document.querySelector('#iconFullscreen') || document.querySelector('div.contents div.iconButton.viewFull');
+  if(el.id==''){ // PLUS - включен
+    d.style.width='46px';
+    d.style.height='25px';
+    d.style.border='1px solid black';
+    d.style.backgroundColor='rgba(0,0,0,0.8)';
+    d.style.zIndex='99999';
+    d.style.position='absolute';
+    d.style.left='158px';
+    d.style.top='-6px';
+  } else { // PLUS - не включен
+    d.style.width='46px';
+    d.style.height='25px';
+    d.style.border='1px solid black';
+    d.style.backgroundColor='rgba(0,0,0,0.8)';
+    d.style.zIndex='99999';
+    d.style.position='absolute';
+    d.style.left='160px';
+    d.style.top='-1px';
+    
+  }
   
-  d.innerHTML='<a href="dorf1.php" class="mapClose" style="'+stA+'">&nbsp;</a>';
-  var el = document.querySelector('#iconFullscreen');
+  d.innerHTML='<a href="dorf1.php" class="mapClose" style="'+stA+'" alt="Закрыть карту">Close</a>';
+  
   el.appendChild(d);
-  
-  
-  
 }
 
 
@@ -670,11 +646,9 @@ var ptv_st = document.createElement('style');
     'cursor:pointer;}'+
   '.ptv_bDelBerichte:hover{background-color:rgba(93,242,137,0.7);} .ptv_bDelBerichte:active{background-color:rgba(93,242,137,0.99);}'+
     
-    // стиль дописываем только для карты (karte.php)
+    // стиль дописываем только для карты (karte.php) и для кнопки  Close
     stKarte+
-    // кнопка ЗАКРЫТЬ КАРТУ - при наведении
-    '.mapClose:hover{background-color:rgba(255,255,255,0.5) !important;}'+
-    '.mapClose:active{background-color:rgba(0,0,0,0.5) !important;}'+
+    
     
     '';
 
