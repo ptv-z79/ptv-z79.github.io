@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.0.63 beta
+// @version     0.0.64 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -19,11 +19,45 @@
 // @grant	      GM_deleteValue
 // @grant       GM_xmlhttpRequest
 
+// @grant       unsafeWindow
+
 // ==/UserScript==
 
 
+var oJSO = window.wrappedJSObject;
+console.info( unsafeWindow.SERVERLINK);
+//unsafeWindow.SERVERLINK
+
+var bbbb = oJSO.Travian.Game.Map.Container;
+console.info('::: ' + oJSO.Travian.Game.Map.Container);
+console.info('::: ' + oJSO.Travian.Game.Map.Options.Default.mapMarks.player.layers.alliance.dialog.html);
+
+
 var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
-var ptv_version='v.0.0.63 beta / 2016-12-22'; // начал писать 2016-12-10
+var ptv_version='v.0.0.64 beta / 2016-12-27'; // начал писать 2016-12-10
+
+
+// получаем значения переменных со страницы
+//alert(window.wrappedJSObject.ajaxToken);
+
+
+console.info(window.wrappedJSObject.stockBarWarehouse.textContent.length);
+console.info(window.wrappedJSObject.stockBarWarehouse.innerHTML.length);
+console.info(window.wrappedJSObject.stockBarWarehouse.innerText.length);
+
+var oResProd = window.wrappedJSObject.resources.production;
+console.info(oResProd['l1']);
+
+var jso = window.wrappedJSObject;
+var ResStor = jso.resources.storage;
+console.log('storage: ' + window.wrappedJSObject.resources);
+
+
+
+
+
+
+
 
 // альянс
 //var href = 'http://travian.ping-timeout.de/travissimo/allianzen.php?aid=4&domain=ts2.travian.co.uk'
@@ -118,6 +152,11 @@ var G_HREF = location.href;     // http://ts6.travian.co.uk/berichte.php?t=4
 var G_PROT = location.protocol; // http:
 var G_HOST = location.hostname; // ts6.travian.co.uk
 var G_PATH = location.pathname; // /berichte.php
+var G_ORIG = location.origin;   // http://ts6.travian.co.uk
+var G_SRCH = location.search;   // ?t=4
+var G_PORT = location.port;     // ""
+
+
 
 /*
 console.info('Href: ' + G_HREF);
@@ -126,6 +165,94 @@ console.info('Host: ' + G_HOST);
 console.info('Path: ' + G_PATH);
 console.info('Длина Path: ' + G_PATH.length)
 */
+
+
+
+// -------------------------------------------
+// --- добавим производство ресурсов в час ---
+// -------------------------------------------
+
+ПроизводствоВЧас('#stockBarResource1','l1'); // дерево
+ПроизводствоВЧас('#stockBarResource2','l2'); // глина
+ПроизводствоВЧас('#stockBarResource3','l3'); // камень
+ПроизводствоВЧас('#stockBarResource4','l4'); // зерно
+
+
+function ПроизводствоВЧас(a,b){
+  var d=document.createElement('div');
+  d.innerHTML=oJSO.resources.production[b];
+  
+  d.style.border='1px solid #ccc';
+  d.style.backgroundColor='white';
+  d.style.position='absolute';
+  d.style.left='1px';
+  d.style.top='25px';
+  d.style.width='72px';
+  d.style.height='16px';
+  d.style.textAlign='right';
+  d.style.fontFamily='Tahoma, sans-serif';
+  d.style.fontSize='8pt';
+  d.style.fontWeight='bold';
+  var цветТекста=oJSO.resources.production[b]<=0?'red':'green';
+  d.style.color=цветТекста;
+  d.style.paddingRight='4px';
+  d.style.lineHeight='15px';
+  var z=(G_PATH === '/karte.php')?'0':'6009';
+  d.style.zIndex=z;
+
+  var place=document.querySelector(a); // после этого элемента вставим наш
+  place.appendChild(d); // добавим наш
+  
+  // -----------------------------------------------
+  
+  var d2=document.createElement('div');
+  d2.innerHTML=parseInt( oJSO.resources.maxStorage[b]-oJSO.resources.storage[b]);
+  
+  d2.style.border='1px solid #ccc';
+  d2.style.backgroundColor='white';
+  d2.style.position='absolute';
+  d2.style.left='-1px';
+  d2.style.top='16px';
+  d2.style.width='72px';
+  d2.style.height='16px';
+  d2.style.textAlign='right';
+  d2.style.fontFamily='Tahoma, sans-serif';
+  d2.style.fontSize='8pt';
+  d2.style.fontWeight='bold';
+  var цветТекста=oJSO.resources.production[b]<=0?'#959595':'#959595';
+  d2.style.color=цветТекста;
+  d2.style.paddingRight='4px';
+  d2.style.lineHeight='15px';
+  d2.style.zIndex=z;
+
+  // var place=document.querySelector(a); // после этого элемента вставим наш
+  d.appendChild(d2); // добавим наш
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -253,8 +380,10 @@ var zInd = getStyle ( "travianBirthdayRibbon" , "z-index" )
 // стырил отсюда:   http://stackoverflow.com/questions/1388007/getting-the-z-index-of-a-div-in-javascript
 function getStyle(el,styleProp)
 {
-    var x = document.getElementById(el);
-    if (window.getComputedStyle)
+  var x = document.getElementById(el);
+  if(x==null)return null; // т.к. в начале игры нет такого элемента, то возвращаем   null
+  
+  if (window.getComputedStyle)
     {
         var y = document.defaultView.getComputedStyle(x,null).getPropertyValue(styleProp); 
     }  
@@ -285,8 +414,6 @@ ptv_html = ptv_html.replace(new RegExp('&quot;','g'),'"');
 dorf2area = ptv_html.indexOf('<area ', 0);
 idd = ptv_html.substr(dorf2area, 1000);
 //console.info(idd);
-
-
 
 
 
@@ -624,9 +751,11 @@ var ptv_st = document.createElement('style');
   // убираем кнопку +25 за голд
     'div.boxes.villageList.production > div.boxes-contents.cf > div {display:none;}'+
   // перемещаем окошко с производством в час
-  'div.boxes.villageList.production{left:-21px;top:0px;width:180px;}'+
+  // 'div.boxes.villageList.production{left:-21px;top:0px;width:180px;}'+
+  // скрываем окошко с производством ресурсов в час
+  'div.boxes.villageList.production{display:none;}'+
   // перемещаем окошко с нападениями
-  'div.village1 div.movements{left:0px;top:0px;}'+
+  // 'div.village1 div.movements{left:0px;top:0px;}'+
   // скрываем окошко "Ежедневные задания"
   'div#sidebarBoxQuestachievements{visibility:hidden;}'+
   
@@ -636,7 +765,7 @@ var ptv_st = document.createElement('style');
     'position:absolute;'+
     'padding:3px 17px 5px 17px;'+
     'margin:-6px 0px 0px 20px !important;'+
-    'background-color:rgba(93,242,137,0.5);'+
+    'background-color:hsla(173,56%,63%,1);'+
     'color:black;'+
     'border:1px solid #cccccc;'+
     'font-family:Verdana,sans-serif;'+
@@ -644,7 +773,7 @@ var ptv_st = document.createElement('style');
     'font-weight:normal;'+
     '-moz-user-select: none;'+
     'cursor:pointer;}'+
-  '.ptv_bDelBerichte:hover{background-color:rgba(93,242,137,0.7);} .ptv_bDelBerichte:active{background-color:rgba(93,242,137,0.99);}'+
+  '.ptv_bDelBerichte:hover{background-color:hsla(173,66%,73%,0.7);} .ptv_bDelBerichte:active{background-color:hsla(173,56%,53%,1);}'+
     
     // стиль дописываем только для карты (karte.php) и для кнопки  Close
     stKarte+
@@ -708,3 +837,26 @@ function getPosElem(id,zInd,bool){
 
 
 
+// пробуем заменить на русский текст -----------------------------------------------------------
+
+for(var i=1;i<=20;i++){
+  if(translated('#content h1', 'Marketplace Level '+String(i), 'Рынок - уровень '+String(i))===true) {
+    console.info(i);
+    break;
+  }
+}
+
+translated('#symmary tr:nth-child(2) td:nth-child(2)', 'are on their way to you.', 'ты купил');
+translated('#symmary tr:nth-child(3) td:nth-child(2)', 'resources have been sent.', 'ты продал');
+
+translated('#build h4.spacer', 'Offers at the marketplace', 'Предложения на рынке');
+translated('#range tr:nth-child(1) th:nth-child(1)', 'Offer', 'Продаёт');
+translated('#range tr:nth-child(1) th:nth-child(3)', 'Search', 'Покупает');
+
+function translated(css, slovoEn, slovoRu){
+  console.info('CSS: '+css);
+  var t=document.querySelector(css);
+  var r;
+  t===null?r=false:t.textContent===slovoEn?t.textContent=slovoRu:r=true; //console.info(t.textContent+'   Не та вкладка!');
+  return r;
+}
