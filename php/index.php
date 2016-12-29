@@ -1,3 +1,3 @@
 <?
-echo mail("Ваш@емайл", "test", "test") ? "ok" : "bad";
+echo mail("t18v05po@gmail.com", "test", "test") ? "ok" : "bad";
 ?>
