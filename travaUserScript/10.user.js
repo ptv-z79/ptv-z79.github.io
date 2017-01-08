@@ -11,7 +11,7 @@
 // @exclude     http://*.travian*.*/manual.php*
 // @exclude     http://*.travian*.*/manual.php*
 
-// @version     0.0.64 beta
+// @version     0.0.65 beta
 
 // @grant       GM_addStyle
 // @grant       GM_getValue
@@ -24,6 +24,10 @@
 // ==/UserScript==
 
 
+
+
+
+
 var oJSO = window.wrappedJSObject;
 console.info( unsafeWindow.SERVERLINK);
 //unsafeWindow.SERVERLINK
@@ -34,7 +38,7 @@ console.info('::: ' + oJSO.Travian.Game.Map.Options.Default.mapMarks.player.laye
 
 
 var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
-var ptv_version='v.0.0.64 beta / 2016-12-27'; // начал писать 2016-12-10
+var ptv_version='v.0.0.65 beta / 2017-01-08'; // начал писать 2016-12-10
 
 
 // получаем значения переменных со страницы
@@ -51,6 +55,27 @@ console.info(oResProd['l1']);
 var jso = window.wrappedJSObject;
 var ResStor = jso.resources.storage;
 console.log('storage: ' + window.wrappedJSObject.resources);
+
+
+
+
+var DIC = {
+  'g':['','Phalanx','Swordsman','Pathfinder','Theutates Thunder','Druidrider','Haeduan','Battering Ram','Trebuchet','Chieftain','Settler'] 
+};
+
+console.info(DIC['g']['4']);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -206,10 +231,10 @@ function ПроизводствоВЧас(a,b){
   // -----------------------------------------------
   
   var d2=document.createElement('div');
-  d2.innerHTML=parseInt( oJSO.resources.maxStorage[b]-oJSO.resources.storage[b]);
+  d2.innerHTML=parseInt( oJSO.resources.maxStorage[b]-oJSO.resources.storage[b] );
   
   d2.style.border='1px solid #ccc';
-  d2.style.backgroundColor='white';
+  d2.style.backgroundColor='rgba(255,255,255,0.999)';
   d2.style.position='absolute';
   d2.style.left='-1px';
   d2.style.top='16px';
@@ -734,10 +759,11 @@ var ptv_st = document.createElement('style');
   
   
   
-  // --- стиль изменений оригинальной страницы нужно ставить ДО началы работы скоипта ---
-  // левое меню ---
-  
-  //'div#sidebarBeforeContent{width:200px;}'+
+  // --- стиль изменений оригинальной страницы нужно ставить ДО началы работы скрипта ---
+  //
+  //'body div#background{background-image:none !important;}'+
+  // левое блок меню ---
+  //'div#sidebarBeforeContent{width:60px;}'+
     
   // скрываем блок  id=sidebarBoxInfobox
   'div#sidebarBoxInfobox{display:none;}'+
@@ -839,13 +865,43 @@ function getPosElem(id,zInd,bool){
 
 // пробуем заменить на русский текст -----------------------------------------------------------
 
-for(var i=1;i<=20;i++){
-  if(translated('#content h1', 'Marketplace Level '+String(i), 'Рынок - уровень '+String(i))===true) {
-    console.info(i);
-    break;
+
+
+
+qs('#contextMenuSendTroops')
+function qs(e){
+  var qs = document.querySelector(e);
+  if(qs!==null){
+    qs = qs.firstChild.nextSibling.textContent='отправить войска';
+    document.querySelector('#contextMenuSendTraders').firstChild.nextSibling.textContent='отправить торговцев';
+    // отметить альянс,игрока,поле -> флагом
+    document.querySelector('#contextMenuMarkPlayerAlliance').firstChild.nextSibling.textContent='отметить альянс';
+    document.querySelector('#contextMenuMarkPlayerPlayer').firstChild.nextSibling.textContent='отметить игрока';
+    document.querySelector('#contextMenuFlagPlayer').firstChild.nextSibling.textContent='отметить поле (флагом)';
   }
 }
 
+
+
+
+
+// подсветка атакующих войск у Галлов
+
+if(document.querySelector('table#troops')!==null){
+
+
+for(var i=1;i<=7;i++){
+var TTcolor = 'table#troops tbody tr:nth-child('+i+') td.un';
+var TTcolorD = document.querySelector(TTcolor).textContent;
+  console.info('i='+i+' , TTcolorD=' + TTcolorD);
+TTcolorD===null?TTcolorD='':TTcolorD==='Theutates Thunders' || TTcolorD==='Haeduan' || TTcolorD==='Haeduans' || TTcolorD==='Swordsmen'?document.querySelector(TTcolor).style.color='red':TTcolorD='';
+}
+  
+
+}
+  
+  
+  
 translated('#symmary tr:nth-child(2) td:nth-child(2)', 'are on their way to you.', 'ты купил');
 translated('#symmary tr:nth-child(3) td:nth-child(2)', 'resources have been sent.', 'ты продал');
 
