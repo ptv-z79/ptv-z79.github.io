@@ -889,13 +889,17 @@ function qs(e){
 var s = 'build.php?id=39&tt=2';
 var q = document.querySelector('form').getAttribute('action');
 if(q!==null && q==s){
-  document.querySelector('form div.option label:nth-child(1) input').nextSibling.textContent=' Подкрепление';
-  document.querySelector('form div.option label:nth-child(1)').style.color='green';
-  document.querySelector('form div.option label:nth-child(3) input').nextSibling.textContent=' Нападение';
-  document.querySelector('form div.option label:nth-child(3)').style.color='red';
-  document.querySelector('form div.option label:nth-child(5) input').nextSibling.textContent=' Набег';
-  document.querySelector('form div.option label:nth-child(5)').style.color='red';
-  
+  q=document.querySelector('form div.option label:nth-child(1) input');
+  if(q!==null){
+    document.querySelector('form div.option label:nth-child(1) input').nextSibling.textContent=' Подкрепление';
+    document.querySelector('form div.option label:nth-child(1)').style.color='green';
+    document.querySelector('form div.option label:nth-child(3) input').nextSibling.textContent=' Нападение';
+    document.querySelector('form div.option label:nth-child(3)').style.color='red';
+    document.querySelector('form div.option label:nth-child(5) input').nextSibling.textContent=' Набег';
+    document.querySelector('form div.option label:nth-child(5)').style.color='red';
+  }
+  q=document.querySelector('form div.redeployHero label input');
+  if(q!==null) q.nextSibling.textContent=' Прописать героя';
 }
 
 
