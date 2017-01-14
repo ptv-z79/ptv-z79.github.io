@@ -867,7 +867,7 @@ function getPosElem(id,zInd,bool){
 
 
 
-
+// меню на карте при нажатии на клетку правой кнопкой мыши
 qs('#contextMenuSendTroops')
 function qs(e){
   var qs = document.querySelector(e);
@@ -879,6 +879,23 @@ function qs(e){
     document.querySelector('#contextMenuMarkPlayerPlayer').firstChild.nextSibling.textContent='отметить игрока';
     document.querySelector('#contextMenuFlagPlayer').firstChild.nextSibling.textContent='отметить поле (флагом)';
   }
+}
+
+
+
+
+//<form method="post" name="snd" action="build.php?id=39&amp;tt=2">
+
+var s = 'build.php?id=39&tt=2';
+var q = document.querySelector('form').getAttribute('action');
+if(q!==null && q==s){
+  document.querySelector('form div.option label:nth-child(1) input').nextSibling.textContent=' Подкрепление';
+  document.querySelector('form div.option label:nth-child(1)').style.color='green';
+  document.querySelector('form div.option label:nth-child(3) input').nextSibling.textContent=' Нападение';
+  document.querySelector('form div.option label:nth-child(3)').style.color='red';
+  document.querySelector('form div.option label:nth-child(5) input').nextSibling.textContent=' Набег';
+  document.querySelector('form div.option label:nth-child(5)').style.color='red';
+  
 }
 
 
