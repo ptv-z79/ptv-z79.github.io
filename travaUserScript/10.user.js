@@ -25,7 +25,8 @@
 
 
 
-
+// прямая ссылка из самой игры (оккупировать оазис)
+// http://ts6.travian.co.uk/build.php?id=39&c=4&tt=2&t11=1&z=339152
 
 
 var oJSO = window.wrappedJSObject;
@@ -34,7 +35,7 @@ console.info( unsafeWindow.SERVERLINK);
 
 var bbbb = oJSO.Travian.Game.Map.Container;
 console.info('::: ' + oJSO.Travian.Game.Map.Container);
-console.info('::: ' + oJSO.Travian.Game.Map.Options.Default.mapMarks.player.layers.alliance.dialog.html);
+//console.info('::: ' + oJSO.Travian.Game.Map.Options.Default.mapMarks.player.layers.alliance.dialog.html);
 
 
 var G_HREFUPDATE = 'https://ptv-z79.github.io/travaUserScript/10.user.js';
@@ -119,6 +120,8 @@ GM_xmlhttpRequest({
 
 // --- переменные --------------------------------------------------
 
+var carry; // мешок с добычей 
+imgDataBase64();
 
 var G_MAPWIDTH = RealWHtmlPage() - 25;
 var G_MAPHEIGHT = document.documentElement.clientHeight - 20;
@@ -724,7 +727,7 @@ var ptv_st = document.createElement('style');
     '.ptv_aXY{width:56px;text-align:center;}'+
     '.ptv_aR{width:16px;}'+
     
-    '.imgR{background-image:url(http://gpack.travian.com/e2ee5537/img/a/carry.gif); margin:4px 0px 0px 1px; padding:0;border:0;width:13px;height:12px;background-position: 0 0px;}'+
+    '.imgR{background-image:url('+carry+'); margin:4px 0px 0px 1px; padding:0;border:0;width:13px;height:12px;background-position: 0 0px;}'+
     
     
     '.ptv_aN,.ptv_aXY,.ptv_aR { '+
@@ -863,6 +866,84 @@ function getPosElem(id,zInd,bool){
 
 
 
+
+// --------------------------------------------------------------------------------------------
+// --------------------------------------- Рынок ----------------------------------------------
+// --------------------------------------------------------------------------------------------
+
+mSend();
+
+function mSend(){
+  var el = document.querySelector('form#merchantsOnTheWayFormular');
+  if(el!==null){    
+    var pos = document.querySelector('div#build');
+    
+    var d = document.createElement('div');
+    d.style='width:550px;height:50px;background-color:rgba(228,75,35,0.49);margin:-18px 0 10px 0;';
+       
+    pos.insertBefore(d, pos.childNodes[0]);
+    
+//   document.querySelector('#build').childNodes[0]
+  
+    
+    
+    //alert(el);
+  
+  }
+  
+  
+
+
+
+
+}
+
+
+
+
+
+
+
+// --------------------------------------------------------------------------------------------
+// ------------------------- http://ts2.travian.co.uk/hero.php --------------------------------
+// --------------------------------------------------------------------------------------------
+
+//divContentTitle();
+
+function divContentTitle(){
+  var d = document;
+  var el = d.querySelector('div.contentTitle');
+  alert(el);
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // пробуем заменить на русский текст -----------------------------------------------------------
 
 
@@ -937,3 +1018,13 @@ function translated(css, slovoEn, slovoRu){
   t===null?r=false:t.textContent===slovoEn?t.textContent=slovoRu:r=true; //console.info(t.textContent+'   Не та вкладка!');
   return r;
 }
+
+
+
+
+function imgDataBase64(){
+  // carry (мешок с добычей)
+  carry = 'data:image/gif;base64,R0lGODlhDQA5AMZSAEU8QFVIM1hLNmBYSmJaSGJaTGpZOnBkTnBlU3NmTnZlTXdmTndsV3t1d4F4Z4JyXIN5ZoR1X4R6a4V9bI6AbJGJepeKeJePf5iMepmRgZqKa5yMbpyQf56PcZ6SgZ6XiKuehK+iibKeerKvsLOnkLWpkramhrarlLerlbeztbm0q72sjr24sL66tL67tMG+ucK7rsK/uMS/tsW/s8XAtsfAtsfCusfDusq6isrDusrGvsvHwM6/ks6/k87LxM/BltHDmdHDmtXJo9XPwtfLptjSxt/XyODUr+DVsOEhEOHZy+HazeLXteQAAOnjz+rk0vLt3vPu4P///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEKAH8ALAAAAAANADkAAAf+gH+CDoSEBwqCiQ44jDgKj4l/i46PGoiRDhoDmgEBAJeDBAMGASIaDIeRgjhHOBoaqZGsra6woCZHubSvoLO5jLyIIiK6jRoEhyYiBBqNrgTIoAnQyBrLoKrZ2tvcqj7f3zc53k/lTznokT7l6DlF4+pFL/IsLCnwgj4xLzMsSkU6xGV7EuVJkSICIxEsaBAhPlzFavXStcuSMGK/gEVTxszZsWiJpkE7YI0Atm4oU2bbwZKljBqqdjiZ6aSGzUgya9ocAhPnkBY/VagY0VPQDhctYKgwMsTGy2xOoDgZMuRppKhSp1YtugSK16xUi2L1OjMsTCNGvtIc4uLlEiN0LobQnOqibVEaddsOgVtUpV+VhSZUgPBA1SQcQZpwwCCoiSRGChZQQOH4T+VMmwogkNCgSWVJogwIWFHig+dsOJAAIdEkg4fPf2b9SILixAULlSEeYSKESAgQERL5QsKjR4cNCy5GfJZsWTNjI6VRI3ntTyAAOw==';
+}
+
+
