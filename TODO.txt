@@ -1,0 +1,3 @@
+Как сделать такую-же подсветку на github как по этой ссылке?
+https://github.com/KD87/xray-extensions/commit/b5ebe407f25ba91902190e1ff40ebe46b70ef318
+
